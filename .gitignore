@@ -1,0 +1,64 @@
+# Compiled files
+*.py[cod]
+*.a
+*.o
+*.so
+__pycache__
+
+
+# Other generated files
+*/_version.py
+*/cython_version.py
+htmlcov
+.coverage
+.coverage.*
+MANIFEST
+.ipynb_checkpoints
+.hypothesis
+junit.xml
+
+# Sphinx
+docs/api
+docs/_build
+
+# Eclipse editor project files
+.project
+
+# Pycharm editor project files
+.idea
+
+# Floobits project files
+.floo
+.flooignore
+
+# Visual Studio Code project files
+.vscode
+
+# Packages/installer info
+*.egg
+*.egg-info
+dist
+build
+eggs
+.eggs
+parts
+bin
+var
+sdist
+develop-eggs
+.installed.cfg
+distribute-*.tar.gz
+
+# Other
+.cache
+.tox
+.*.sw[op]
+*~
+.project
+.pydevproject
+.settings
+pip-wheel-metadata/
+.tmp
+
+# Mac OSX
+.DS_Store

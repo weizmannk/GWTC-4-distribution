@@ -1,0 +1,11 @@
+pip install "numpy<2"
+
+
+
+#  ARM-native Python
+# Download for Apple Silicon:
+curl -LO https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-MacOSX-arm64.sh
+bash Miniforge3-MacOSX-arm64.sh
+
+
+pip install --upgrade "jax[cpu]"

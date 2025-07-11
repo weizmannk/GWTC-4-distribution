@@ -35,17 +35,17 @@ from bilby.hyper.model import Model
 from gwpopulation.models.redshift import PowerLawRedshift
 from tqdm import tqdm
 
-from cupy_utils import xp
-from gwpopulation_pipe_pdb import draw_true_values
-from map_utils import extract_map_parameters
-from mass_models import (
+from gwpop.mass_models import (
     matter_matters_pairing,
     matter_matters_primary_secondary_independent,
 )
-from spin_models import (
+from gwpop.spin_models import (
     iid_spin_magnitude_beta,
     iid_spin_orientation_gaussian_isotropic,
 )
+from pipe.gwpopulation_pipe_pdb import draw_true_values
+from utils.cupy_utils import xp
+from utils.map_utils import extract_map_parameters
 
 
 def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):

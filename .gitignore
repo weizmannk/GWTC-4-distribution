@@ -4,7 +4,7 @@
 *.o
 *.so
 __pycache__
-
+.ruff_cache
 
 # Other generated files
 */_version.py

@@ -8,7 +8,7 @@ Authors
 
 """
 
-from cupy_utils import beta_dist, truncnorm, xp
+from ..utils.cupy_utils import beta_dist, truncnorm, xp
 
 
 def iid_spin_orientation_gaussian_isotropic(dataset, xi_spin, sigma_spin):

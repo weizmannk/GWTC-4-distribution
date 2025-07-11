@@ -7,7 +7,7 @@ Authors
 
 """
 
-from cupy_utils import xp
+from ..utils.cupy_utils import xp
 
 
 def matter_matters_primary_secondary_independent(

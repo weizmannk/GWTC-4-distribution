@@ -49,6 +49,9 @@ develop-eggs
 .installed.cfg
 distribute-*.tar.gz
 
+# Ignore folders
+O4_result
+
 # Other
 .cache
 .tox

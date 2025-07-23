@@ -27,7 +27,7 @@ from bilby.core.utils import logger
 from bilby.gw.cosmology import get_cosmology
 from bilby.gw.prior import UniformSourceFrame
 
-from ..utils.cupy_utils import to_numpy, xp
+from utils.cupy_utils import to_numpy, xp
 
 # Parameter bounds
 BOUNDS = {

@@ -131,18 +131,17 @@ def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):
                 redshift=xp.array([0.6, 0.6]),
             )
         )
-
         model.parameters.update(maxp_samp)
         # model.parameters.update(dict(beta_q=1.892889))
         # model.parameters.update(dict(lamb=2.7))
 
-        events = pd.concat(dfs).reset_index(drop=True)
-        events.to_json(f"{events_filename}_all.json", indent=4)
-        Table.from_pandas(events).write(
-            f"{events_filename}_all.h5", path="events", overwrite=True, format="hdf5"
-        )
+    events = pd.concat(dfs).reset_index(drop=True)
+    events.to_json(f"{events_filename}_all.json", indent=4)
+    Table.from_pandas(events).write(
+        f"{events_filename}_all.h5", path="events", overwrite=True, format="hdf5"
+    )
 
-        return events
+    return events
 
 
 if __name__ == "__main__":
@@ -150,7 +149,7 @@ if __name__ == "__main__":
 
     outdir = "O4_result"
     os.makedirs(outdir, exist_ok=True)
-    events = sample_max_post(result_file, outdir, n_samples=int(1e6), pdb=False)
+    events = sample_max_post(result_file, outdir, n_samples=int(1e6), pdb=True)
 
     if events is not None:
         bns_count = (events["mass_1"] < 3).sum()

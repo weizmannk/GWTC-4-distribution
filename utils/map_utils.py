@@ -99,13 +99,20 @@ def extract_map_parameters(
     post = result.posterior.copy()
     maxp = post.loc[np.argmax(post.log_likelihood)]
 
+    maxp["absolute_mmin"] = 0.5
+    maxp["absolute_mmax"] = 350
+    maxp["alpha_chi"] = 1
+    maxp["alpha_1"] = 1
+    print(maxp)
+
     # Extract requested parameters
+    # filtered = {key: maxp[key] for key in parameters if key in maxp}
     filtered = {key: maxp[key] for key in parameters if key in maxp}
 
     # Optional: Add/override certain parameters (example hardcoded values, adjust as needed)
-    filtered.update(dict(beta_q=1.892889))
-    filtered.update(dict(alpha_chi=1))
-    filtered.update(dict(alpha_1=-1))
+    # filtered.update(dict(beta_q=1.892889))
+    # filtered.update(dict(alpha_chi=1))
+    # filtered.update(dict(alpha_1=-1))
 
     # Optionally sort
     if sort:
@@ -117,4 +124,11 @@ def extract_map_parameters(
         for k, v in filtered.items()
     }
 
-    return pd.Series(processed) if as_series else processed
+    exclude_abs = {"alpha_1", "alpha_2", "log_prior"}
+    processed = maxp.copy()
+
+    for key in processed.index:
+        if key not in exclude_abs:
+            processed[key] = np.abs(processed[key])
+
+    return processed  # pd.Series(processed) if as_series else processed

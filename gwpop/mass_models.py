@@ -7,7 +7,7 @@ Authors
 
 """
 
-from ..utils.cupy_utils import truncnorm, xp
+from utils.cupy_utils import truncnorm, xp
 
 
 def power_law_dip_break_1d(

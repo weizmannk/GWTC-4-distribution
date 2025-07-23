@@ -97,7 +97,7 @@ def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):
         )
 
     model.parameters.update(maxp_samp)
-    model.parameters.update(dict(beta_q=1.892889))
+    # model.parameters.update(dict(beta_q=1.892889))
     # model.parameters.update(dict(lamb=2.7))
 
     # Sampling in chunks if n_samples is large
@@ -133,7 +133,7 @@ def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):
         )
 
         model.parameters.update(maxp_samp)
-        model.parameters.update(dict(beta_q=1.892889))
+        # model.parameters.update(dict(beta_q=1.892889))
         # model.parameters.update(dict(lamb=2.7))
 
         events = pd.concat(dfs).reset_index(drop=True)
@@ -150,7 +150,7 @@ if __name__ == "__main__":
 
     outdir = "O4_result"
     os.makedirs(outdir, exist_ok=True)
-    events = sample_max_post(result_file, outdir, n_samples=int(1e6), pdb=True)
+    events = sample_max_post(result_file, outdir, n_samples=int(1e6), pdb=False)
 
     if events is not None:
         bns_count = (events["mass_1"] < 3).sum()

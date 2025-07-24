@@ -132,8 +132,6 @@ def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):
             )
         )
         model.parameters.update(maxp_samp)
-        # model.parameters.update(dict(beta_q=1.892889))
-        # model.parameters.update(dict(lamb=2.7))
 
     events = pd.concat(dfs).reset_index(drop=True)
     events.to_json(f"{events_filename}_all.json", indent=4)

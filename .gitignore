@@ -10,12 +10,7 @@ __pycache__
 */_version.py
 */cython_version.py
 htmlcov
-.coverage
-.coverage.*
-MANIFEST
 .ipynb_checkpoints
-.hypothesis
-junit.xml
 
 # Sphinx
 docs/api

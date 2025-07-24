@@ -101,34 +101,15 @@ def extract_map_parameters(
 
     maxp["absolute_mmin"] = 0.5
     maxp["absolute_mmax"] = 350
-    maxp["alpha_chi"] = 1
-    maxp["alpha_1"] = 1
+    # maxp['alpha_chi'] = 1
+    # maxp['alpha_1'] = 1
     print(maxp)
 
-    # Extract requested parameters
-    # filtered = {key: maxp[key] for key in parameters if key in maxp}
-    filtered = {key: maxp[key] for key in parameters if key in maxp}
-
-    # Optional: Add/override certain parameters (example hardcoded values, adjust as needed)
-    # filtered.update(dict(beta_q=1.892889))
-    # filtered.update(dict(alpha_chi=1))
-    # filtered.update(dict(alpha_1=-1))
-
-    # Optionally sort
-    if sort:
-        filtered = dict(sorted(filtered.items()))
-
-    # Process values (example: take abs except for certain parameters)
-    processed = {
-        k: v if k in {"alpha_1", "alpha_2", "log_prior"} else np.abs(v)
-        for k, v in filtered.items()
-    }
-
-    exclude_abs = {"alpha_1", "alpha_2", "log_prior"}
+    # exclude_abs = {"alpha_1", "alpha_2", "log_prior"}
     processed = maxp.copy()
 
-    for key in processed.index:
-        if key not in exclude_abs:
-            processed[key] = np.abs(processed[key])
+    # for key in processed.index:
+    #    if key not in exclude_abs:
+    #        processed[key] = np.abs(processed[key])
 
     return processed  # pd.Series(processed) if as_series else processed

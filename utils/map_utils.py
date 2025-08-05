@@ -101,8 +101,8 @@ def extract_map_parameters(
 
     maxp["absolute_mmin"] = 0.5
     maxp["absolute_mmax"] = 350
-    maxp['alpha_chi'] = 1
-    maxp['alpha_1'] = 1
+   # maxp['alpha_chi'] = 1
+    # maxp['alpha_1'] = 1
     print(maxp)
 
     exclude_abs = {"alpha_1", "alpha_2", "log_prior"}

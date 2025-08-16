@@ -146,14 +146,6 @@ def _draw_from_prior(n_samples):
         for key, (low, high) in BOUNDS.items()
     }
 
-    # samples["redshift"] = xp.asarray(
-    #     UniformSourceFrame(
-    #         minimum=BOUNDS["redshift"][0],
-    #         maximum=BOUNDS["redshift"][1],
-    #         name="redshift",
-    #     ).sample(n_samples)
-    # )
-
     samples["redshift"] = xp.asarray(
         Uniform(
             minimum=BOUNDS["redshift"][0],

@@ -23,27 +23,26 @@ Functions
 
 import numpy as np
 import pandas as pd
+from bilby.core.prior import Uniform
 from bilby.core.utils import logger
-from bilby.gw.cosmology import get_cosmology
-from bilby.gw.prior import UniformSourceFrame
 
 from utils.cupy_utils import to_numpy, xp
 
-# Parameter bounds
+# -------------------------------
+# Parameter bounds (source frame)
+# -------------------------------
 BOUNDS = {
-    "mass_1": (1, 100),
-    "mass_ratio": (0, 1),
-    "a_1": (0, 1),
-    "a_2": (0, 1),
-    "cos_tilt_1": (-1, 1),
-    "cos_tilt_2": (-1, 1),
-    "redshift": (0, 1.5),
+    "mass_1": (1.0, 100.0),
+    "mass_ratio": (0.0, 1.0),
+    "a_1": (0.0, 1.0),
+    "a_2": (0.0, 1.0),
+    "cos_tilt_1": (-1.0, 1.0),
+    "cos_tilt_2": (-1.0, 1.0),
+    "redshift": (0.0, 1.5),
 }
 
-cosmology = get_cosmology()
 
-
-def draw_true_values(model, vt_model=None, n_samples=40, parameters=None):
+def draw_true_values(model, vt_model=None, n_samples=40):
     """
     Draw synthetic gravitational-wave event parameters using rejection sampling from a population model.
 
@@ -56,8 +55,6 @@ def draw_true_values(model, vt_model=None, n_samples=40, parameters=None):
         If not provided, a flat selection function (all events equally detectable) is assumed.
     n_samples : int, optional
         Number of synthetic samples to generate. Default is 40.
-    parameters : dict, optional
-        Dictionary of parameters to restore the model's original state after sampling.
 
     Returns
     -------
@@ -69,6 +66,9 @@ def draw_true_values(model, vt_model=None, n_samples=40, parameters=None):
     - The rejection sampling approach may be inefficient for sharply peaked distributions.
     - When a selection function (`vt_model`) is provided, it is applied to weight event detectability.
     """
+
+    if n_samples <= 0:
+        raise ValueError("n_samples must be positive.")
 
     if vt_model is None:
 
@@ -110,8 +110,6 @@ def draw_true_values(model, vt_model=None, n_samples=40, parameters=None):
             f"Sampling efficiency low. Total samples so far: {len(total_samples)}"
         )
 
-        # Clear model cache workaround
-        model.parameters.update(dict(A=0.0, lamb=0.1, alpha_chi=2.0, xi_spin=0.2))
         model.prob(
             {
                 "mass_1": xp.array([5, 9]),
@@ -123,9 +121,6 @@ def draw_true_values(model, vt_model=None, n_samples=40, parameters=None):
                 "redshift": xp.array([0.6, 0.6]),
             }
         )
-
-        if parameters is not None:
-            model.parameters.update(parameters)
 
     total_samples = total_samples.drop(columns="prob")
     return total_samples
@@ -151,8 +146,16 @@ def _draw_from_prior(n_samples):
         for key, (low, high) in BOUNDS.items()
     }
 
+    # samples["redshift"] = xp.asarray(
+    #     UniformSourceFrame(
+    #         minimum=BOUNDS["redshift"][0],
+    #         maximum=BOUNDS["redshift"][1],
+    #         name="redshift",
+    #     ).sample(n_samples)
+    # )
+
     samples["redshift"] = xp.asarray(
-        UniformSourceFrame(
+        Uniform(
             minimum=BOUNDS["redshift"][0],
             maximum=BOUNDS["redshift"][1],
             name="redshift",

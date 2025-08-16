@@ -26,6 +26,7 @@ Main features:
 
 """
 
+import logging
 import os
 
 import numpy as np
@@ -44,8 +45,15 @@ from gwpop.spin_models import (
     iid_spin_orientation_gaussian_isotropic,
 )
 from pipe.gwpopulation_pipe_pdb import draw_true_values
-from utils.cupy_utils import xp
 from utils.map_utils import extract_map_parameters
+
+# Configure logger
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)-8s %(message)s",
+    datefmt="%H:%M:%S",
+)
+logger = logging.getLogger(__name__)
 
 
 def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):
@@ -66,17 +74,18 @@ def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):
     pd.DataFrame
         DataFrame with all simulated events.
     """
-    # Define output filename base
+
+    # --- outputs ---
     dirname = os.path.abspath(outdir)
+    os.makedirs(dirname, exist_ok=True)
     label = os.path.splitext(os.path.basename(result_file))[0]
     events_filename = os.path.join(dirname, f"{label}_events_baseline5")
 
-    # Extract MAP parameters
+    # --- MAP hyperparameters ---
     maxp_samp = extract_map_parameters(result_file, as_series=True)
+    logger.info(f"[{label}] MAP hyperparameters loaded.")
 
-    print(maxp_samp)
-
-    # Select model according to pdb flag
+    # --- model (no caching) ---
     if pdb:
         model = Model(
             [
@@ -84,7 +93,8 @@ def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):
                 iid_spin_orientation_gaussian_isotropic,
                 iid_spin_magnitude_beta,
                 PowerLawRedshift(z_max=2.3),
-            ]
+            ],
+            cache=False,
         )
     else:
         model = Model(
@@ -93,46 +103,40 @@ def sample_max_post(result_file, outdir="outdir", n_samples=10, pdb=True):
                 iid_spin_orientation_gaussian_isotropic,
                 iid_spin_magnitude_beta,
                 PowerLawRedshift(z_max=2.3),
-            ]
+            ],
+            cache=False,
         )
 
     model.parameters.update(maxp_samp)
-    # model.parameters.update(dict(beta_q=1.892889))
-    # model.parameters.update(dict(lamb=2.7))
 
-    # Sampling in chunks if n_samples is large
+    # rng = np.random.default_rng(seed) if seed is not None else None
+
+    # --- chunked sampling ---
+    # We split the total number of samples into smaller "chunks" to avoid
+    # memory overload and to save intermediate results to disk.
     dfs = []
     chunk_size = int(1e3)
     n_chunks = int(np.ceil(n_samples / chunk_size))
 
+    # Loop over each chunk
     for counter in tqdm(range(n_chunks), desc="Simulating events"):
         current_chunk_size = min(chunk_size, n_samples - counter * chunk_size)
+
+        # Generate events from the population model
         events_group = draw_true_values(
-            model=model,
-            vt_model=None,
-            n_samples=current_chunk_size,
-            parameters=None,
+            model=model, vt_model=None, n_samples=current_chunk_size
         )
+
+        # Save the current chunk immediately as JSON
+        # (this prevents memory issues and keeps partial results safe)
         events_group.reset_index(drop=True).to_json(
             f"{events_filename}_{counter + 1}.json", indent=4
         )
+
+        # Keep the chunk in memory for final concatenation
         dfs.append(events_group)
 
-        # Clear Bilby cache to avoid memory issues
-        model.parameters.update(dict(A=0.0, lamb=0.1, alpha_chi=2.0, xi_spin=0.2))
-        model.prob(
-            dict(
-                mass_1=xp.array([5, 9]),
-                mass_2=xp.array([1, 5]),
-                a_1=xp.array([0.5, 0.6]),
-                a_2=xp.array([0.5, 0.6]),
-                cos_tilt_1=xp.array([0.1, 0.1]),
-                cos_tilt_2=xp.array([0.1, 0.1]),
-                redshift=xp.array([0.6, 0.6]),
-            )
-        )
-        model.parameters.update(maxp_samp)
-
+    # --- concatenate all chunks + save global outputs ---
     events = pd.concat(dfs).reset_index(drop=True)
     events.to_json(f"{events_filename}_all.json", indent=4)
     Table.from_pandas(events).write(
@@ -146,7 +150,6 @@ if __name__ == "__main__":
     result_file = "data/baseline5_widesigmachi2_mass_NotchFilterBinnedPairingMassDistribution_redshift_powerlaw_mag_iid_spin_magnitude_gaussian_tilt_iid_spin_orientation_result.hdf5"
 
     outdir = "O4_result"
-    os.makedirs(outdir, exist_ok=True)
     events = sample_max_post(result_file, outdir, n_samples=int(1e6), pdb=True)
 
     if events is not None:
@@ -159,7 +162,3 @@ if __name__ == "__main__":
             f"Number of NSBH: {nsbh_count}\n"
             f"Number of BBH: {bbh_count}"
         )
-
-        
-        
-

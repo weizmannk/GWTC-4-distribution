@@ -45,7 +45,7 @@ develop-eggs
 distribute-*.tar.gz
 
 # Ignore folders
-O4_result
+#O4_result
 
 # Other
 .cache

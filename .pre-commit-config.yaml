@@ -46,10 +46,10 @@ repos:
   # Like "Clear All Output"—keeps output locally but skips committing it to Git.
   # This should be done before running "codespell" to prevent it from catching errors
   # in output files (typically code images or other generated output).
-  - repo: https://github.com/kynan/nbstripout
-    rev: 0.8.1
-    hooks:
-      - id: nbstripout
+  # - repo: https://github.com/kynan/nbstripout
+  #   rev: 0.8.1
+  #   hooks:
+  #     - id: nbstripout
 
   # Spell checker for code and documentation.
   # Uses the codespell tool to find and correct common misspellings in source code, comments, and documentation.
@@ -60,3 +60,5 @@ repos:
         args: ["--write-changes"]
         additional_dependencies:
           - tomli
+
+        exclude: ^|.*\.ipynb

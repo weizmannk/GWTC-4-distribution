@@ -44,6 +44,9 @@ develop-eggs
 .installed.cfg
 distribute-*.tar.gz
 
+*.xml
+*.dat
+
 # Ignore folders
 #O4_result
 
